@@ -9,7 +9,7 @@ __all__ = (
 
 
 def get_home_directory() -> Path:
-    Path.home() / ".pwpw"
+    return Path.home() / ".pwpw"
 
 
 def get_wallet_path() -> Path:

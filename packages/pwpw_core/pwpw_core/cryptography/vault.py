@@ -22,7 +22,7 @@ __all__ = (
 
 
 class Vault(Lockbox):
-    challenges: conlist(Challenge, min_items=1)
+    challenges: conlist(Challenge, min_length=1)
 
 
 def lock_data(

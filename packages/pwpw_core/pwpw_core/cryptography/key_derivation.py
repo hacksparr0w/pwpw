@@ -1,12 +1,11 @@
-import base64
-
 from enum import StrEnum, auto
-from typing import Annotated, Literal
+from typing import Literal
 
 import argon2
 
 from argon2 import Argon2Variant, Argon2Version
-from pydantic import BaseModel, PlainSerializer, PlainValidator
+from pwpw_common.types import b64bytes
+from pydantic import BaseModel
 
 
 __all__ = (
@@ -15,8 +14,7 @@ __all__ = (
     "KeyDerivationType",
 
     "derive_key",
-    "derive_key_argon2",
-    "get_key_derivation_class"
+    "derive_key_argon2"
 )
 
 
@@ -26,12 +24,7 @@ class KeyDerivationType(StrEnum):
 
 class Argon2KeyDerivation(BaseModel):
     type: Literal[KeyDerivationType.ARGON2] = KeyDerivationType.ARGON2
-    salt: Annotated[
-        bytes,
-        PlainValidator(base64.b64decode),
-        PlainSerializer(base64.b64encode)
-    ]
-
+    salt: b64bytes
     iterations: int
     memory: int
     parallelism: int
@@ -43,7 +36,7 @@ class Argon2KeyDerivation(BaseModel):
 type KeyDerivation = Argon2KeyDerivation
 
 
-def derive_key_argon2(
+def derive_argon2_key(
     parameters: Argon2KeyDerivation,
     password: bytes
 ) -> bytes:
@@ -63,20 +56,10 @@ def derive_key(
     parameters: KeyDerivation,
     password: bytes
 ) -> bytes:
-    if parameters.type == KeyDerivationType.ARGON2:
-        return derive_key_argon2(parameters, password)
-
-    raise NotImplementedError(
-        f"'{parameters.type}' key derivation not supported"
-    )
-
-
-def get_key_derivation_class(
-    key_derivation_type: KeyDerivationType
-) -> type[KeyDerivation]:
-    if key_derivation_type == KeyDerivationType.ARGON2:
-        return Argon2KeyDerivation
-
-    raise NotImplementedError(
-        f"'{key_derivation_type}' key derivation not supported"
-    )
+    match parameters:
+        case Argon2KeyDerivation():
+            return derive_argon2_key(parameters, password)
+        case _:
+            raise NotImplementedError(
+                f"'{type(parameters).__name__}' key derivation not supported"
+            )

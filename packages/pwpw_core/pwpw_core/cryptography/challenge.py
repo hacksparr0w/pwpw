@@ -122,15 +122,18 @@ def solve_challenge(
     challenge: Challenge,
     secret: bytes
 ) -> bytes:
-    if challenge.type == ChallengeType.KEY:
-        return solve_key_challenge(
-            challenge=challenge,
-            encryption_key=secret
-        )
-    elif challenge.type == ChallengeType.PASSWORD:
-        return solve_password_challenge(
-            challenge=challenge,
-            password=secret
-        )
-
-    raise NotImplementedError(f"'{challenge.type}' challenge not supported")
+    match challenge:
+        case KeyChallenge():
+            return solve_key_challenge(
+                challenge=challenge,
+                encryption_key=secret
+            )
+        case PasswordChallenge():
+            return solve_password_challenge(
+                challenge=challenge,
+                password=secret
+            )
+        case _:
+            raise NotImplementedError(
+                f"'{type(challenge).__name__}' challenge not supported"
+            )

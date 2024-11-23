@@ -1,19 +1,15 @@
 [project]
-name = "pwpwd"
+name = "pwpw-http-client"
 version = "0.1.0"
 dependencies = [
-    "fastapi[standard]>=0.115.5",
+    "aiohttp>=3.11.7",
     "pwpw-common",
-    "pwpw-core",
     "pwpw-protocol",
-    "solid",
 ]
 
 [tool.uv.sources]
 pwpw-common = { workspace = true }
-pwpw-core = { workspace = true }
 pwpw-protocol = { workspace = true }
-solid = { git = "https://github.com/hacksparr0w/solid.git" }
 
 [build-system]
 requires = ["hatchling"]

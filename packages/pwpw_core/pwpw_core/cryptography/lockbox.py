@@ -1,8 +1,7 @@
-import base64
+from typing import Any
 
-from typing import Annotated, Any
-
-from pydantic import BaseModel, PlainSerializer, PlainValidator, TypeAdapter
+from pwpw_common.types import b64bytes
+from pydantic import BaseModel, TypeAdapter
 
 from .cipher import Cipher, decrypt, encrypt
 
@@ -19,11 +18,7 @@ __all__ = (
 
 class Lockbox(BaseModel):
     cipher: Cipher
-    content: Annotated[
-        bytes,
-        PlainValidator(base64.b64decode, when_used="json"),
-        PlainSerializer(base64.b64encode, when_used="json")
-    ]
+    content: b64bytes
 
 
 def lock_data(*, cipher: Cipher, key: bytes, data: bytes) -> Lockbox:

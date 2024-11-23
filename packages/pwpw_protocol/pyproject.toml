@@ -1,15 +1,11 @@
 [project]
-name = "pwpw-core"
+name = "pwpw-protocol"
 version = "0.1.0"
 dependencies = [
-    "argon2",
-    "cryptography>=43.0.3",
-    "pydantic>=2.9.2",
     "pwpw-common"
 ]
 
 [tool.uv.sources]
-argon2 = { git = "https://github.com/hacksparr0w/argon2.git" }
 pwpw-common = { workspace = true }
 
 [build-system]

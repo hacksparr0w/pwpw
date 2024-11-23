@@ -2,6 +2,7 @@ from enum import StrEnum, auto
 from typing import Literal, Optional
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from pwpw_common.types import b64bytes
 from pydantic import BaseModel
 
 
@@ -14,8 +15,7 @@ __all__ = (
     "cipher",
     "cipher_aes_gcm",
     "decrypt",
-    "encrypt",
-    "get_cipher_class"
+    "encrypt"
 )
 
 
@@ -30,8 +30,8 @@ class CipherType(StrEnum):
 
 class AesGcmCipher(BaseModel):
     type: Literal[CipherType.AES_GCM] = CipherType.AES_GCM
-    ad: Optional[bytes]
-    iv: bytes
+    iv: b64bytes
+    ad: Optional[b64bytes]
 
 
 type Cipher = AesGcmCipher
@@ -60,15 +60,18 @@ def cipher(
     key: bytes,
     data: bytes
 ) -> bytes:
-    if parameters.type == CipherType.AES_GCM:
-        return cipher_aes_gcm(
-            parameters=parameters,
-            operation=operation,
-            key=key,
-            data=data
-        )
-
-    raise NotImplementedError(f"'{parameters.type}' cipher not supported")
+    match parameters:
+        case AesGcmCipher():
+            return cipher_aes_gcm(
+                parameters=parameters,
+                operation=operation,
+                key=key,
+                data=data
+            )
+        case _:
+            raise NotImplementedError(
+                f"'{type(parameters).__name__}' cipher not supported"
+            )
 
 
 def decrypt(*, parameters: Cipher, key: bytes, data: bytes) -> bytes:
@@ -87,10 +90,3 @@ def encrypt(*, parameters: Cipher, key: bytes, data: bytes) -> bytes:
         key=key,
         data=data
     )
-
-
-def get_cipher_class(cipher_type: CipherType) -> type[Cipher]:
-    if cipher_type == CipherType.AES_GCM:
-        return AesGcmCipher
-
-    raise NotImplementedError(f"'{cipher_type}' cipher not supported")

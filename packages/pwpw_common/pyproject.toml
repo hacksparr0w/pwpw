@@ -1,5 +1,5 @@
 [project]
-name = "pwpw-cli"
+name = "pwpw-common"
 version = "0.1.0"
 
 [build-system]

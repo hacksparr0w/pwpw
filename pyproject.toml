@@ -1,0 +1,29 @@
+[project]
+name = "pwpw"
+version = "0.1.0"
+description = "Decentralized secret storage & identity manager"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pwpw-cli",
+    "pwpw-common",
+    "pwpw-core",
+    "pwpw-http-client",
+    "pwpw-protocol",
+    "pwpwd"
+]
+
+[tool.uv.sources]
+pwpw-cli = { workspace = true }
+pwpw-common = { workspace = true }
+pwpw-core = { workspace = true }
+pwpw-http-client = { workspace = true }
+pwpw-protocol = { workspace = true }
+pwpwd = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
