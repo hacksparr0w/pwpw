@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Union
+from typing import Sequence, Union
 
-from pwpw_core.cryptography.challenge import Challenge
-from pwpw_core.wallet import Wallet
 from pydantic import BaseModel
+from timecapsule import Challenge
+
+from .wallet.base import Wallet
 
 
 __all__ = (
@@ -19,9 +20,9 @@ class LockWalletAction(BaseModel):
 
 class UnlockWalletAction(BaseModel):
     master_key: bytes
-    challenges: list[Challenge]
+    challenges: Sequence[Challenge]
     wallet: Wallet
-    wallet_path: Path
+    path: Path
 
 
 ApplicationAction = Union[

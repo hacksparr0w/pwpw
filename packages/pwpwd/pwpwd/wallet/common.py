@@ -1,20 +1,19 @@
 from pathlib import Path
+from typing import Sequence
 
-from pwpw_core.cryptography.challenge import Challenge
-from pwpw_core.cryptography.csprng import generate_random_bytes
-from pwpw_core.cryptography.vault import lock_model
-from pwpw_core.wallet import Wallet
+from locki.configuration import CryptographyConfiguration
+from locki.csprng import generate_random_bytes
+from timecapsule import Challenge
 from pwpw_protocol.wallet import WalletExistsError
 from pydantic import BaseModel
 
-from ..configuration import configuration
-from ..cryptography import (
+from .cryptography import (
     generate_random_password_challenges,
     generate_random_recovery_codes,
     lock_model
 )
 
-from ..home import get_wallet_path, initialize_home_directory
+from .base import Wallet
 
 
 __all__ = (
@@ -26,48 +25,49 @@ __all__ = (
 
 class WalletInitializationResult(BaseModel):
     master_key: bytes
-    recovery_codes: list[str]
-    challenges: list[Challenge]
+    recovery_codes: Sequence[bytes]
+    challenges: Sequence[Challenge]
     wallet: Wallet
-    wallet_path: Path
 
 
 def initialize_wallet(
+    configuration: CryptographyConfiguration,
+    path: Path,
     username: str,
-    password: str
+    password: bytes
 ) -> WalletInitializationResult:
-    initialize_home_directory()
-    wallet_path = get_wallet_path()
-
-    if wallet_path.exists():
+    if path.exists():
         raise WalletExistsError
 
-    master_key = generate_random_bytes(
-        configuration.cryptography.cipher.key_length
+    master_key = generate_random_bytes(configuration.cipher.key_length)
+
+    recovery_codes = generate_random_recovery_codes(
+        configuration=configuration,
+        count=3
     )
 
-    recovery_codes = generate_random_recovery_codes()
     challenges = generate_random_password_challenges(
+        configuration=configuration,
         password=password,
         recovery_codes=recovery_codes,
         master_key=master_key
     )
 
     wallet = Wallet.empty(username)
-    vault = lock_model(
+    capsule = lock_model(
+        configuration=configuration,
         challenges=challenges,
         master_key=master_key,
         model=wallet
     )
 
-    wallet_path.write_text(vault.model_dump_json())
+    path.write_text(capsule.model_dump_json())
 
     result = WalletInitializationResult(
         master_key=master_key,
         recovery_codes=recovery_codes,
         challenges=challenges,
-        wallet=wallet,
-        wallet_path=wallet_path
+        wallet=wallet
     )
 
     return result

@@ -1,10 +1,11 @@
+import logging
+
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import (
     RequestValidationError as FastAPIRequestValidationError
 )
 
 from fastapi.responses import JSONResponse
-
 from pwpw_protocol.error import (
     ApplicationError,
     RequestValidationError as PwpwRequestValidationError,
@@ -18,6 +19,9 @@ from .router import wallet_router
 __all__ = (
     "application",
 )
+
+
+_logger = logging.getLogger(__name__)
 
 
 async def error_handler(request, on_next):
@@ -40,6 +44,7 @@ async def error_handler(request, on_next):
                     content=error.dump()
                 )
             case _:
+                _logger.exception("Unexpected error")
                 return JSONResponse(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     content=UnexpectedError().dump()

@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 from typing import (
     Any,
     ClassVar,
+    Mapping,
     Optional,
     Self,
+    Sequence,
     get_args as get_generic_args,
     get_origin as get_generic_origin
 )
@@ -54,16 +58,16 @@ class ApplicationError[T](Exception):
                 f"'{data.__class__.__name__}'"
             )
 
-        self.data = data
+        self.data = data # type: ignore [reportAttributeAccessIssue]
 
-    def dump(self) -> dict[str, Any]:
+    def dump(self: Self) -> dict[str, Any]:
         return {
-            "error": self.__class__.__name__,
+            "error": type(self).__name__,
             "data": TypeAdapter(Any).dump_python(self.data)
         }
 
     @classmethod
-    def validate(cls, data: bytes) -> Self:
+    def validate(cls, data: Mapping[str, Any]) -> ApplicationError[Any]:
         name = data["error"]
 
         child = find(
@@ -76,13 +80,13 @@ class ApplicationError[T](Exception):
         hint = get_generic_args(base)[0]
 
         data = data["data"]
-        data = TypeAdapter(hint).validate_json(data)
+        data = TypeAdapter(hint).validate_python(data)
 
         return child(data=data)
 
 
 class RequestValidationErrorData(BaseModel):
-    detail: list[Any]
+    detail: Sequence[Any]
 
 
 class RequestValidationError(ApplicationError[RequestValidationErrorData]):

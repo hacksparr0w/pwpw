@@ -3,8 +3,8 @@ from typing import Optional, override
 from aiohttp import ClientSession
 from pwpw_protocol.client.wallet import PwpwWalletClient
 from pwpw_protocol.wallet import (
-    WalletInitializeRequest,
-    WalletInitializeResponse
+    WalletInitializationRequest,
+    WalletInitializationResponse
 )
 
 from pydantic import BaseModel
@@ -49,11 +49,14 @@ class PwpwWalletHttpClient(PwpwWalletClient):
     @override
     async def initialize(
         self,
-        request: WalletInitializeRequest
-    ) -> WalletInitializeResponse:
+        request: WalletInitializationRequest
+    ) -> WalletInitializationResponse:
         return await http_request(
+            self._session,
             HttpMethod.POST,
-            "/wallet/initialize",
-            response_type=SimpleHttpResponseType(WalletInitializeResponse),
+            self._build_url("/initialize"),
+            response_type=SimpleHttpResponseType(
+                model_type=WalletInitializationResponse
+            ),
             data=request
         )

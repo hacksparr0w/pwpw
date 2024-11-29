@@ -23,7 +23,7 @@ class HttpMethod(StrEnum):
 
 
 class SimpleHttpResponseType[T: BaseModel](BaseModel):
-    model: T
+    model_type: type[T]
 
 
 type HttpResponseType[T: BaseModel] = SimpleHttpResponseType[T]
@@ -50,10 +50,10 @@ async def http_request[T: BaseModel](
     )
 
     if not _is_http_response_ok(response):
-        response_data = await response.read()
+        response_data = await response.json()
         response.close()
 
-        error = ApplicationError.deserialize(response_data)
+        error = ApplicationError.validate(response_data)
 
         raise error
 
@@ -61,7 +61,7 @@ async def http_request[T: BaseModel](
         response_data = await response.read()
         response.close()
 
-        result = response_type.model.model_validate_json(response_data)
+        result = response_type.model_type.model_validate_json(response_data)
 
         return result
 

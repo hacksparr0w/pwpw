@@ -6,7 +6,9 @@ from pwpw_protocol.wallet import (
 )
 
 from ..action import UnlockWalletAction
-from ..core.wallet import initialize_wallet as _initialize_wallet
+from ..configuration import configuration
+from ..home import get_wallet_path, initialize_home_directory
+from ..wallet.common import initialize_wallet as _initialize_wallet
 from ..store import store
 
 
@@ -25,13 +27,21 @@ router = APIRouter(
 async def initialize_wallet(
     request: WalletInitializationRequest
 ) -> WalletInitializationResponse:
-    result = _initialize_wallet(request.username, request.password)
+    initialize_home_directory()
+
+    path = get_wallet_path()
+    result = _initialize_wallet(
+        configuration.cryptography,
+        path,
+        request.username,
+        request.password
+    )
 
     action = UnlockWalletAction(
         master_key=result.master_key,
         challenges=result.challenges,
         wallet=result.wallet,
-        wallet_path=result.wallet_path
+        path=path
     )
 
     response = WalletInitializationResponse(

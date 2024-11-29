@@ -3,17 +3,19 @@ name = "pwpwd"
 version = "0.1.0"
 dependencies = [
     "fastapi[standard]>=0.115.5",
+    "locki",
     "pwpw-common",
-    "pwpw-core",
     "pwpw-protocol",
     "solid",
+    "timecapsule",
 ]
 
 [tool.uv.sources]
 pwpw-common = { workspace = true }
-pwpw-core = { workspace = true }
 pwpw-protocol = { workspace = true }
 solid = { git = "https://github.com/hacksparr0w/solid.git" }
+locki = { git = "https://github.com/hacksparr0w/locki.git" }
+timecapsule = { git = "https://github.com/hacksparr0w/timecapsule.git" }
 
 [build-system]
 requires = ["hatchling"]

@@ -14,8 +14,13 @@ def application_state_reducer(
     match action:
         case LockWalletAction():
             return lock_wallet(state)
-        case UnlockWalletAction(master_key=master_key, wallet=wallet):
-            return unlock_wallet(state, master_key, wallet)
+        case UnlockWalletAction(
+            master_key=master_key,
+            challenges=challenges,
+            wallet=wallet,
+            path=path
+        ):
+            return unlock_wallet(state, master_key, challenges, wallet, path)
         case _:
             raise NotImplementedError(
                 f"'{type(action).__name__}' action not supported"

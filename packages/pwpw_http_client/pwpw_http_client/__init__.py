@@ -30,4 +30,4 @@ class PwpwHttpClient(PwpwClient):
         error_value: Optional[BaseException] = None,
         error_traceback: Optional[TracebackType] = None
     ) -> None:
-        self._session.close()
+        await self._session.close()

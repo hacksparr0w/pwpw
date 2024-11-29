@@ -13,7 +13,7 @@ def get_home_directory() -> Path:
 
 
 def get_wallet_path() -> Path:
-    return get_home_directory() / "wallet.json"
+    return get_home_directory() / "wallet.capsule"
 
 
 def initialize_home_directory() -> Path:

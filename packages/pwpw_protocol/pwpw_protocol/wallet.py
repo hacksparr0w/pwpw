@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from pydantic import BaseModel
 
 from .error import ApplicationError
@@ -26,7 +28,7 @@ class WalletInitializationRequest(BaseModel):
 
 
 class WalletInitializationResponse(BaseModel):
-    recovery_codes: list[bytes]
+    recovery_codes: Sequence[bytes]
 
 
 class WalletNotFoundError(ApplicationError[None]):

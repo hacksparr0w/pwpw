@@ -1,6 +1,5 @@
 from argon2 import Argon2Variant, Argon2Version
-
-from pwpw_core.cryptography.configuration import (
+from locki.configuration import (
     AesGcmCipherConfiguration,
     Argon2KeyDerivationConfiguration,
     CryptographyConfiguration,

@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Self, Union
+from typing import Self, Sequence, Union
 
-from pwpw_core.cryptography.challenge import Challenge
-from pwpw_core.wallet import Wallet
 from pydantic import BaseModel
+from timecapsule import Challenge
+
+from .wallet.base import Wallet
 
 
 __all__ = (
@@ -28,9 +29,9 @@ class UnknownWalletState(BaseModel):
 
 class UnlockedWalletState(BaseModel):
     master_key: bytes
-    challenges: list[Challenge]
+    challenges: Sequence[Challenge]
     wallet: Wallet
-    wallet_path: Path
+    path: Path
 
 
 type WalletState = Union[
@@ -63,9 +64,9 @@ def lock_wallet(state: ApplicationState) -> ApplicationState:
 def unlock_wallet(
     state: ApplicationState,
     master_key: bytes,
-    challenges: list[Challenge],
+    challenges: Sequence[Challenge],
     wallet: Wallet,
-    wallet_path: Path
+    path: Path
 ) -> ApplicationState:
     if not isinstance(state.wallet, UnknownWalletState):
         raise InvalidStateError
@@ -76,7 +77,7 @@ def unlock_wallet(
                 master_key=master_key,
                 challenges=challenges,
                 wallet=wallet,
-                wallet_path=wallet_path
+                path=path
             )
         }
     )
