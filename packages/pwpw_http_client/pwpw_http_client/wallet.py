@@ -49,7 +49,8 @@ class PwpwWalletHttpClient(PwpwWalletClient):
     @override
     async def initialize(
         self,
-        request: WalletInitializationRequest
+        username: str,
+        password: str
     ) -> WalletInitializationResponse:
         return await http_request(
             self._session,
@@ -58,5 +59,8 @@ class PwpwWalletHttpClient(PwpwWalletClient):
             response_type=SimpleHttpResponseType(
                 model_type=WalletInitializationResponse
             ),
-            data=request
+            data=WalletInitializationRequest(
+                username=username,
+                password=password
+            )
         )

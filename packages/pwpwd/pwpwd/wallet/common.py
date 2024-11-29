@@ -25,7 +25,7 @@ __all__ = (
 
 class WalletInitializationResult(BaseModel):
     master_key: bytes
-    recovery_codes: Sequence[bytes]
+    recovery_codes: Sequence[str]
     challenges: Sequence[Challenge]
     wallet: Wallet
 
@@ -34,7 +34,7 @@ def initialize_wallet(
     configuration: CryptographyConfiguration,
     path: Path,
     username: str,
-    password: bytes
+    password: str
 ) -> WalletInitializationResult:
     if path.exists():
         raise WalletExistsError

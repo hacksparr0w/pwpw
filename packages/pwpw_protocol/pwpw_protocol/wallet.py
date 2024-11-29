@@ -24,11 +24,11 @@ class WalletDownloadResponse(BaseModel):
 
 class WalletInitializationRequest(BaseModel):
     username: str
-    password: bytes
+    password: str
 
 
 class WalletInitializationResponse(BaseModel):
-    recovery_codes: Sequence[bytes]
+    recovery_codes: Sequence[str]
 
 
 class WalletNotFoundError(ApplicationError[None]):

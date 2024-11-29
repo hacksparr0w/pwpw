@@ -27,20 +27,20 @@ __all__ = (
 def generate_random_password_challenges(
     *,
     configuration: CryptographyConfiguration,
-    password: bytes,
-    recovery_codes: list[bytes],
+    password: str,
+    recovery_codes: Sequence[str],
     master_key: bytes
 ) -> list[PasswordChallenge]:
     password_challenge = generate_random_password_challenge(
         configuration=configuration,
-        password=password,
+        password=password.encode(),
         master_key=master_key
     )
 
     recovery_code_challenges = [
         generate_random_password_challenge(
             configuration=configuration,
-            password=recovery_code,
+            password=recovery_code.encode(),
             master_key=master_key
         )
         for recovery_code in recovery_codes
@@ -53,25 +53,20 @@ def generate_random_recovery_code(
     *,
     configuration: CryptographyConfiguration,
     index: int
-) -> bytes:
+) -> str:
     base = _generate_random_recovery_code(
         segments=configuration.recovery_code.segments,
         segment_length=configuration.recovery_code.segment_length
     )
 
-    base = base.decode()
-
-    result = f"PW{index:03}-{base}"
-    result = result.encode()
-
-    return result
+    return f"PW{index:03}-{base}"
 
 
 def generate_random_recovery_codes(
     *,
     configuration: CryptographyConfiguration,
     count: int
-) -> list[bytes]:
+) -> list[str]:
     return [
         generate_random_recovery_code(
             configuration=configuration,
@@ -105,5 +100,5 @@ def lock_model[P](
     )
 
 
-def parse_recovery_code_index(code: bytes) -> int:
+def parse_recovery_code_index(code: str) -> int:
     return int(code[2:5])

@@ -8,15 +8,36 @@ from .wallet.base import Wallet
 
 
 __all__ = (
+    "ApplicationAction",
     "ApplicationState",
     "InvalidStateError",
+    "LockWalletAction",
     "UnknownWalletState",
     "UnlockedWalletState",
+    "UnlockWalletAction",
     "WalletState",
 
+    "application_state_reducer",
     "lock_wallet",
     "unlock_wallet"
 )
+
+
+class LockWalletAction(BaseModel):
+    pass
+
+
+class UnlockWalletAction(BaseModel):
+    master_key: bytes
+    challenges: Sequence[Challenge]
+    wallet: Wallet
+    path: Path
+
+
+ApplicationAction = Union[
+    LockWalletAction,
+    UnlockWalletAction
+]
 
 
 class InvalidStateError(Exception):
@@ -81,3 +102,23 @@ def unlock_wallet(
             )
         }
     )
+
+
+def application_state_reducer(
+    state: ApplicationState,
+    action: ApplicationAction
+) -> ApplicationState:
+    match action:
+        case LockWalletAction():
+            return lock_wallet(state)
+        case UnlockWalletAction(
+            master_key=master_key,
+            challenges=challenges,
+            wallet=wallet,
+            path=path
+        ):
+            return unlock_wallet(state, master_key, challenges, wallet, path)
+        case _:
+            raise NotImplementedError(
+                f"'{type(action).__name__}' action not supported"
+            )

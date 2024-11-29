@@ -394,7 +394,7 @@ wheels = [
 [[package]]
 name = "locki"
 version = "0.1.0"
-source = { git = "https://github.com/hacksparr0w/locki.git#24bf883d08cc41c8a3c36480948a29cc7a09e4d6" }
+source = { git = "https://github.com/hacksparr0w/locki.git#34defd6373204740942c79a85c147169ec347034" }
 dependencies = [
     { name = "argon2" },
     { name = "cryptography" },
@@ -586,6 +586,16 @@ dev = [
 name = "pwpw-cli"
 version = "0.1.0"
 source = { editable = "packages/pwpw_cli" }
+dependencies = [
+    { name = "pwpw-http-client" },
+    { name = "pwpw-protocol" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pwpw-http-client", editable = "packages/pwpw_http_client" },
+    { name = "pwpw-protocol", editable = "packages/pwpw_protocol" },
+]
 
 [[package]]
 name = "pwpw-common"

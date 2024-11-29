@@ -5,10 +5,10 @@ from pwpw_protocol.wallet import (
     WalletInitializationResponse
 )
 
-from ..action import UnlockWalletAction
 from ..configuration import configuration
 from ..home import get_wallet_path, initialize_home_directory
 from ..wallet.common import initialize_wallet as _initialize_wallet
+from ..state import UnlockWalletAction
 from ..store import store
 
 
