@@ -4,7 +4,9 @@ from aiohttp import ClientSession
 from pwpw_protocol.client.wallet import PwpwWalletClient
 from pwpw_protocol.wallet import (
     WalletInitializationRequest,
-    WalletInitializationResponse
+    WalletInitializationResponse,
+    WalletLockRequest,
+    WalletLockResponse
 )
 
 from pydantic import BaseModel
@@ -63,4 +65,16 @@ class PwpwWalletHttpClient(PwpwWalletClient):
                 username=username,
                 password=password
             )
+        )
+
+    @override
+    async def lock(self) -> WalletLockResponse:
+        return await http_request(
+            self._session,
+            HttpMethod.POST,
+            self._build_url("/lock"),
+            response_type=SimpleHttpResponseType(
+                model_type=WalletLockResponse
+            ),
+            data=WalletLockRequest()
         )

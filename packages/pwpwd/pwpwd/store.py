@@ -1,6 +1,7 @@
 from solid import create_store
 
-from .state import ApplicationState, application_state_reducer
+from .state.model import ApplicationState
+from .state.reducer import application_state_reducer
 
 
 __all__ = (

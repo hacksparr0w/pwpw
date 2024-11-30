@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ..wallet import WalletInitializationResponse
+from ..wallet import WalletInitializationResponse, WalletLockResponse
 
 
 class PwpwWalletClient(ABC):
@@ -10,4 +10,8 @@ class PwpwWalletClient(ABC):
         username: str,
         password: str
     ) -> WalletInitializationResponse:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def lock(self) -> WalletLockResponse:
         raise NotImplementedError

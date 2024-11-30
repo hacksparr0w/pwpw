@@ -6,8 +6,16 @@ from .error import ApplicationError
 
 
 __all__ = (
-    "WalletLockedError",
+    "WalletDownloadRequest",
+    "WalletDownloadResponse",
+    "WalletExistsError",
+    "WalletInitializationRequest",
+    "WalletInitializationResponse",
+    "WalletInaccessibleError",
+    "WalletLockRequest",
+    "WalletLockResponse",
     "WalletNotFoundError",
+    "WalletUnlockedError",
     "WalletUnlockError",
     "WalletUnlockRequest",
     "WalletUnlockResponse"
@@ -22,6 +30,10 @@ class WalletDownloadResponse(BaseModel):
     pass
 
 
+class WalletExistsError(ApplicationError[None]):
+    pass
+
+
 class WalletInitializationRequest(BaseModel):
     username: str
     password: str
@@ -31,11 +43,19 @@ class WalletInitializationResponse(BaseModel):
     recovery_codes: Sequence[str]
 
 
-class WalletNotFoundError(ApplicationError[None]):
+class WalletInaccessibleError(ApplicationError[None]):
     pass
 
 
-class WalletLockedError(ApplicationError[None]):
+class WalletLockRequest(BaseModel):
+    pass
+
+
+class WalletLockResponse(BaseModel):
+    pass
+
+
+class WalletNotFoundError(ApplicationError[None]):
     pass
 
 
@@ -43,7 +63,7 @@ class WalletUnlockError(ApplicationError[None]):
     pass
 
 
-class WalletExistsError(ApplicationError[None]):
+class WalletUnlockedError(ApplicationError[None]):
     pass
 
 

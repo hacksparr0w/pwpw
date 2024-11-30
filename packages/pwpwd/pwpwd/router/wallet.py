@@ -2,14 +2,15 @@ from fastapi import APIRouter
 
 from pwpw_protocol.wallet import (
     WalletInitializationRequest,
-    WalletInitializationResponse
+    WalletInitializationResponse,
+    WalletLockRequest,
+    WalletLockResponse
 )
 
-from ..configuration import configuration
-from ..home import get_wallet_path, initialize_home_directory
-from ..wallet.common import initialize_wallet as _initialize_wallet
-from ..state import UnlockWalletAction
-from ..store import store
+from ..controller.wallet import (
+    initialize_wallet as _initialize_wallet,
+    lock_wallet as _lock_wallet
+)
 
 
 __all__ = (
@@ -27,27 +28,9 @@ router = APIRouter(
 async def initialize_wallet(
     request: WalletInitializationRequest
 ) -> WalletInitializationResponse:
-    initialize_home_directory()
+    return await _initialize_wallet(request)
 
-    path = get_wallet_path()
-    result = _initialize_wallet(
-        configuration.cryptography,
-        path,
-        request.username,
-        request.password
-    )
 
-    action = UnlockWalletAction(
-        master_key=result.master_key,
-        challenges=result.challenges,
-        wallet=result.wallet,
-        path=path
-    )
-
-    response = WalletInitializationResponse(
-        recovery_codes=result.recovery_codes
-    )
-
-    store.action.on_next(action)
-
-    return response
+@router.post("/lock")
+async def lock_wallet(request: WalletLockRequest) -> WalletLockResponse:
+    return await _lock_wallet(request)

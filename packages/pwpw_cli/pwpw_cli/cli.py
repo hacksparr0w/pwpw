@@ -3,7 +3,11 @@ import sys
 import click
 
 from pwpw_http_client import PwpwHttpClient
-from pwpw_protocol.wallet import WalletExistsError
+from pwpw_protocol.wallet import (
+    WalletExistsError,
+    WalletInaccessibleError,
+    WalletUnlockedError
+)
 
 from . import styled
 from .asyncly import asyncly
@@ -40,6 +44,9 @@ async def initialize_wallet(username: str, password: str):
     except WalletExistsError:
         click.echo(styled.error("Wallet already exists"))
         sys.exit(1)
+    except WalletUnlockedError:
+        click.echo(styled.error("Wallet already unlocked"))
+        sys.exit(1)
 
     click.echo(
         styled.info(
@@ -65,3 +72,23 @@ async def initialize_wallet(username: str, password: str):
     )
 
     click.clear()
+
+
+@wallet.command("lock")
+@asyncly
+async def lock_wallet():
+    click.echo()
+
+    try:
+        async with PwpwHttpClient() as client:
+            await client.wallet.lock()
+    except WalletInaccessibleError:
+        click.echo(
+            styled.error(
+                "Wallet is inaccessible, unlock or initialize it first"
+            )
+        )
+
+        sys.exit(1)
+
+    click.echo(styled.info("Wallet locked"))

@@ -13,7 +13,7 @@ def default(message):
 
 
 def info(message):
-    return click.style(message, fg="blue")
+    return click.style(message, fg="cyan")
 
 
 def error(message):

@@ -13,7 +13,7 @@ from .cryptography import (
     lock_model
 )
 
-from .base import Wallet
+from .model import Wallet
 
 
 __all__ = (
