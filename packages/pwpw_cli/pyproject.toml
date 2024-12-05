@@ -1,0 +1,15 @@
+[project]
+name = "pwpw-cli"
+version = "0.1.0"
+dependencies = [
+    "pwpw-http-client",
+    "pwpw-protocol",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+pwpw-http-client = { workspace = true }
+pwpw-protocol = { workspace = true }

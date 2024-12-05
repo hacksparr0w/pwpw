@@ -1,0 +1,16 @@
+[project]
+name = "pwpw-http-client"
+version = "0.1.0"
+dependencies = [
+    "aiohttp>=3.11.7",
+    "pwpw-common",
+    "pwpw-protocol",
+]
+
+[tool.uv.sources]
+pwpw-common = { workspace = true }
+pwpw-protocol = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
